@@ -208,3 +208,165 @@
 //         return tillRightCnt - tillLeftCnt;
 //     }
 // };
+
+// -----------------------------------------------------------------------------------------------------------
+
+// Problem 3 - Max Consecutive Ones III
+
+// Given a binary array nums and an integer k, return the maximum number of consecutive 1's in the array if you can flip at most k 0's.
+
+// Example 1:
+
+// Input: nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2
+// Output: 6
+// Explanation: [1,1,1,0,0,1,1,1,1,1,1]
+// Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
+// Example 2:
+
+// Input: nums = [0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1], k = 3
+// Output: 10
+// Explanation: [0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1]
+// Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
+ 
+// Constraints:
+
+// 1 <= nums.length <= 105
+// nums[i] is either 0 or 1.
+// 0 <= k <= nums.length
+
+// //Approach 1 - O(n^2) TLE
+
+// class Solution {
+// public:
+//     int longestOnes(vector<int>& nums, int k) {
+        
+
+//         int n = nums.size();
+//         int maxi = INT_MIN;
+//         for(int i=0;i<n;i++){
+
+//             int cnt = k;
+//             int j;
+//             for(j=i;j<n;j++){
+                
+//                 if(nums[j] == 0 && cnt == 0) break;
+                
+//                 if(nums[j] == 0) cnt--;
+//             }
+
+//             maxi = max(maxi, j-i);
+//         }
+
+//         return maxi;
+//     }
+
+// };
+
+
+//Approach 2 - Optimal O(n) using sliding window just find out the maximum lenegth window where the number of 0's at max is k
+
+// class Solution {
+// public:
+//     int longestOnes(vector<int>& nums, int k) {
+        
+
+
+//         int l = 0,r = 0;
+//         int cntZeroes = 0;
+
+//         int n = nums.size();
+//         int maxi = INT_MIN;
+//         while(r < n){
+
+//             if(nums[r] == 0) cntZeroes++;
+
+//             if(l <= r && cntZeroes>k){
+
+//                 if(nums[l] == 0) cntZeroes--;
+//                 l++;
+//             }
+
+//             //you will always have the window which has 0's less than or equal to k
+//             maxi = max(maxi, r-l+1);
+//             r++;
+//         }
+
+//         return maxi;
+
+//     }
+// };
+
+
+// --------------------------------------------------------------------------------------------------------------
+
+// Problem 4 - Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit
+
+// Given an array of integers nums and an integer limit, return the size of the longest non-empty subarray such that the absolute difference between any two elements of this subarray is less than or equal to limit.
+
+// Example 1:
+
+// Input: nums = [8,2,4,7], limit = 4
+// Output: 2 
+// Explanation: All subarrays are: 
+// [8] with maximum absolute diff |8-8| = 0 <= 4.
+// [8,2] with maximum absolute diff |8-2| = 6 > 4. 
+// [8,2,4] with maximum absolute diff |8-2| = 6 > 4.
+// [8,2,4,7] with maximum absolute diff |8-2| = 6 > 4.
+// [2] with maximum absolute diff |2-2| = 0 <= 4.
+// [2,4] with maximum absolute diff |2-4| = 2 <= 4.
+// [2,4,7] with maximum absolute diff |2-7| = 5 > 4.
+// [4] with maximum absolute diff |4-4| = 0 <= 4.
+// [4,7] with maximum absolute diff |4-7| = 3 <= 4.
+// [7] with maximum absolute diff |7-7| = 0 <= 4. 
+// Therefore, the size of the longest subarray is 2.
+// Example 2:
+
+// Input: nums = [10,1,2,4,7,2], limit = 5
+// Output: 4 
+// Explanation: The subarray [2,4,7,2] is the longest since the maximum absolute diff is |2-7| = 5 <= 5.
+// Example 3:
+
+// Input: nums = [4,2,2,2,4,4,2,2], limit = 0
+// Output: 3
+ 
+
+// Constraints:
+
+// 1 <= nums.length <= 105
+// 1 <= nums[i] <= 109
+// 0 <= limit <= 109
+
+
+// class Solution {
+// public:
+//     int longestSubarray(vector<int>& nums, int limit) {
+        
+
+//         int maxi = INT_MIN;
+
+//         int n= nums.size();
+
+//         int l = 0,r = 0;
+
+//         map<int,int> mpp;//use ordered map to get the minimum and the maximum element
+//         while(r < n){
+
+//             mpp[nums[r]]++;
+//             auto it = mpp.end();
+//             it--;
+//             while(l<r && it->first - mpp.begin()->first > limit){
+
+//                 mpp[nums[l]]--;
+//                 if(mpp[nums[l]] == 0) mpp.erase(nums[l]);
+//                 l++;
+//                 it = mpp.end();//may be the maximum elemnet iterator may chnagde
+//                 it--;
+//             }
+
+//             maxi = max(maxi, r-l+1);
+//             r++;
+//         }
+
+//         return maxi;
+//     }
+// };

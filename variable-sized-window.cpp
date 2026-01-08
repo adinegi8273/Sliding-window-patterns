@@ -370,3 +370,201 @@
 //         return maxi;
 //     }
 // };
+
+
+// ------------------------------------------------------------------------------------------------------------
+
+// Problem 5 - Maximum Erasure Value
+
+// You are given an array of positive integers nums and want to erase a subarray containing unique elements. The score you get by erasing the subarray is equal to the sum of its elements.
+// Return the maximum score you can get by erasing exactly one subarray.
+// An array b is called to be a subarray of a if it forms a contiguous subsequence of a, that is, if it is equal to a[l],a[l+1],...,a[r] for some (l,r).
+
+// Example 1:
+
+// Input: nums = [4,2,4,5,6]
+// Output: 17
+// Explanation: The optimal subarray here is [2,4,5,6].
+// Example 2:
+
+// Input: nums = [5,2,1,2,5,2,1,2,5]
+// Output: 8
+// Explanation: The optimal subarray here is [5,2,1] or [1,2,5].
+
+// Constraints:
+
+// 1 <= nums.length <= 105
+// 1 <= nums[i] <= 104
+
+//Approach 1 - O(n) time and space O(1)
+
+// class Solution {
+// public:
+//     int maximumUniqueSubarray(vector<int>& nums) {
+        
+//         int l = 0,r = 0;
+//         int n = nums.size();
+//         int res = 0;
+//         unordered_map<int,int> mpp;
+//         int sum = 0;
+//         while(r < n){
+            
+//             sum = sum + nums[r];
+//             while(l<=r && mpp.count(nums[r])){
+    
+//                 mpp[nums[l]]--;
+//                 sum = sum - nums[l];
+//                 if(mpp[nums[l]] == 0) mpp.erase(nums[l]);
+//                 l++;
+//             }
+
+//             //here we have come which means nums[r] is absent in the map
+//             mpp[nums[r]]++;
+//             res = max(res,sum);
+            
+//             r++;
+//         }
+
+//         return res;
+//     }
+// };
+
+
+// Approach 2 - O(n) time and O(n) space
+
+// class Solution {
+// public:
+//     int maximumUniqueSubarray(vector<int>& nums) {
+        
+//         int n = nums.size();
+//         unordered_map<int,int> mpp;
+
+//         vector<int> prefix = nums;
+
+//         for(int i=1;i<n;i++){
+//             prefix[i] += prefix[i-1];
+//         }
+
+//         int l = 0,r = 0;
+//         int res = INT_MIN;
+
+//         while(r < n){
+
+//             int sum = prefix[r];
+
+//             if(mpp.count(nums[r]) && l <= mpp[nums[r]]){
+//                 //so must remove the sum i.e. collected till mpp[nums[r]] using prefix array directly
+//                 sum  -= prefix[ mpp[nums[r]] ];
+//                 l = mpp[nums[r]]+1;
+//             }
+//             else{
+//                 //map does contain it
+//                 if(l != 0) sum -= prefix[l-1];
+//             }
+
+//             mpp[nums[r]] = r;
+//             res = max(res, sum);
+//             r++;
+//         }
+
+
+//         return res;
+//     }
+// };
+
+// --------------------------------------------------------------------------------------------------------------
+
+// Problem 6 - Maximize the Confusion of an Exam
+
+// A teacher is writing a test with n true/false questions, with 'T' denoting true and 'F' denoting false. He wants to confuse the students by maximizing the number of consecutive questions with the same answer (multiple trues or multiple falses in a row).
+// You are given a string answerKey, where answerKey[i] is the original answer to the ith question. In addition, you are given an integer k, the maximum number of times you may perform the following operation:
+// Change the answer key for any question to 'T' or 'F' (i.e., set answerKey[i] to 'T' or 'F').
+// Return the maximum number of consecutive 'T's or 'F's in the answer key after performing the operation at most k times.
+
+// Example 1:
+
+// Input: answerKey = "TTFF", k = 2
+// Output: 4
+// Explanation: We can replace both the 'F's with 'T's to make answerKey = "TTTT".
+// There are four consecutive 'T's.
+// Example 2:
+
+// Input: answerKey = "TFFT", k = 1
+// Output: 3
+// Explanation: We can replace the first 'T' with an 'F' to make answerKey = "FFFT".
+// Alternatively, we can replace the second 'T' with an 'F' to make answerKey = "TFFF".
+// In both cases, there are three consecutive 'F's.
+// Example 3:
+
+// Input: answerKey = "TTFTTFTT", k = 1
+// Output: 5
+// Explanation: We can replace the first 'F' to make answerKey = "TTTTTFTT"
+// Alternatively, we can replace the second 'F' to make answerKey = "TTFTTTTT". 
+// In both cases, there are five consecutive 'T's.
+
+// Constraints:
+
+// n == answerKey.length
+// 1 <= n <= 5 * 104
+// answerKey[i] is either 'T' or 'F'
+// 1 <= k <= n
+
+
+// Approach 1 - Brute force O(n^2) - Gave me a TLE
+// class Solution {
+// public:
+//     int maxConsecutiveAnswers(string answerKey, int k) {
+        
+//         int res = INT_MIN;
+
+//         int n= answerKey.size();
+
+//         for(int i=0;i<n;i++){
+
+//             int true_cnt = 0,false_cnt = 0;
+//             for(int j=i;j<n;j++){
+
+//                 if(answerKey[j] == 'T') true_cnt++;
+//                 else false_cnt++;
+//                 if(min(true_cnt,false_cnt) > k) break;
+
+//                 res = max(res,j-i+1);
+//             }
+//         }
+
+//         return res;
+//     }
+// };
+
+
+// Approach 2 - Optimal O(n) using sliding window
+// class Solution {
+// public:
+//     int maxConsecutiveAnswers(string answerKey, int k) {
+        
+//         int res = INT_MIN;
+
+//         int n= answerKey.size();
+
+//         int true_cnt = 0,false_cnt = 0;
+//         int l = 0,r = 0;
+
+//         while(r < n){
+
+//             if(answerKey[r] == 'T') true_cnt++;
+//             else false_cnt++;
+
+//             while(l<r && min(true_cnt,false_cnt) > k){
+//                 if(answerKey[l] == 'T') true_cnt--;
+//                 else false_cnt--;
+//                 l++;
+//             }
+
+//             //here you come that means min(true_cnt,false_cnt) <= k means this window i can have all of one parity may be all true or all false
+//             res = max(res, r-l+1);
+//             r++;
+//         }
+
+//         return res;
+//     }
+// };
